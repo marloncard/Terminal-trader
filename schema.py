@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sqlite3
+from model.position import Position
 
 
 class Schema:
@@ -12,7 +13,7 @@ class Schema:
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type_, value, traceback):
         if self.connection:
             if self.cursor:
                 self.connection.commit()
@@ -37,11 +38,17 @@ class Schema:
 
 
 def build_user():
-        Schema().create_table('user_info')  
-        Schema().modify_table('user_info', 'user_name', 'VARCHAR')
-        Schema().modify_table('user_info', 'real_name', 'VARCHAR')
-        Schema().modify_table('user_info', 'password', 'VARCHAR')
-        Schema().modify_table('user_info', 'balance', 'FLOAT')
+    Schema().create_table('user_info')  
+    Schema().modify_table('user_info', 'user_name', 'VARCHAR')
+    Schema().modify_table('user_info', 'real_name', 'VARCHAR')
+    Schema().modify_table('user_info', 'password', 'VARCHAR')
+    Schema().modify_table('user_info', 'balance', 'FLOAT')
+
+def build_positions():
+    with sqlite3.connect("trader.db") as conn:
+        cur = conn.cursor()
+        cur.execute("DROP TABLE IF EXISTS positions;")
+        cur.execute(Position.create_sql)
 
 if __name__ == '__main__':
     build_user()

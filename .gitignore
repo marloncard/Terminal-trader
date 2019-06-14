@@ -1,3 +1,4 @@
+*.pyc
 __pycache__
 .Python
 build/
@@ -18,3 +19,5 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+venv/
+.vscode/

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import sqlite3
 from .orm import Sqlite3ORM
+from .position import Position
+import bcrypt
 
-#TABLENAME = "user_info"
 
 
 class User(Sqlite3ORM):
@@ -18,54 +19,37 @@ class User(Sqlite3ORM):
         self.real_name = kwargs.get('real_name')
         self.balance = kwargs.get('balance', 0.0)
 
+    def hash_password(self, password):
+        """someuser.hash_password("somepassword") sets someusers self.password
+        to a bcrypt encoded hash"""
+        self.password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
-    # def _insert(self):
-    #     with sqlite3.connect(DBNAME) as conn:
-    #         curr = conn.cursor()
-    #         SQL = """
-    #                 INSERT INTO user_info(user_name, password, real_name, balance)
-    #                 VALUES(?,?,?,?);
-    #               """
-    #         curr.execute(SQL, (self.user_name, self.password, self.real_name, self.balance))
-    #         #  .lastrowid returns row id of last modified row
-    #         self.pk = curr.lastrowid
-
-    def _update(self):
-        with sqlite3.connect(self.dbpath) as conn:
-            curr = conn.cursor()
-            SQL = """
-                    UPDATE user_info 
-                    SET user_name=?, password=?, real_name=?, balance=?
-                    WHERE pk=?;
-                  """
-            curr.execute(SQL, (self.user_name,
-                               self.password,
-                               self.real_name,
-                               self.balance,
-                               self.pk))
-
-  
-    @classmethod 
-    def frompk(cls, pk):
-        '''
-        A class method is bound to the class rather than the object;
-        doesn't require creation of class instance. The first parameter
-        is always the class itself (cls)
-        '''
-        with sqlite3.connect(cls.dbpath) as conn:
-            # The 'Row' instance is a optimized row_factory for connection
-            # objects. Supports mapping access by column names and index;
-            # Also iteration, representation, equality testing and len()
-            conn.row_factory = sqlite3.Row
-            curr = conn.cursor()
-            SQL = """
-                SELECT * FROM user_info
-                WHERE pk=?;
-                """
-            curr.execute(SQL, (pk,))
-            row = curr.fetchone()
-            if not row:
-                return None
-            user = cls(**row)
+    @classmethod
+    def login(cls, user_name, password):
+        """ Search for the user with the given username (use one_where) and then
+        use bcrypt's checkpw() to verify that the credentials are correct
+        return none for bad credentials or the matching User instance on a
+        successful login
+        """
+        user = cls.one_where("user_name=?", (user_name,))
+        if user is None:
+            return None
+        if bcrypt.checkpw(password.encode(), user.password):
             return user
+        return None
+
+    def all_positions(self):
+        positions = Position.many_where("user_info_pk=?", (self.pk,))
+        return positions
+
+    def positions_for_stock(self, ticker):
+        """ return a user's position in one stock or None """
+        position = Position.one_where("user_info_pk=? AND ticker=?", (self.pk, ticker))
+        return position
+
+    def buy(self, ticker, amount):
+        """Buy a stock. If there is no current position, create one. If there is
+        increase it's amount. No return value"""
+        pass
+
 

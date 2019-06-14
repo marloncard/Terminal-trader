@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 
-def create_insert(table, columns):
+def create_insert(table_name, columns):
 
     columnlist = ", ".join(columns)
     qmarks = ", ".join("?" for val in columns)
-    SQL = """ INSERT INTO {tablename} ({columnlist})
+    SQL = """ INSERT INTO {table_name} ({columnlist})
               VALUES ({qumarks})
           """
-    return SQL.format(tablename=tablename,
+    return SQL.format(table_name=table_name,
                       columnlist=columnlist,
                       qmarks=qmarks)
 
