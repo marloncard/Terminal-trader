@@ -59,5 +59,5 @@ class TestPosition(TestCase):
 
     def testPosition(self):
         mike = User.from_pk(1)
-        position = mike.position_for_stock("aapl")
+        position = mike.positions_for_stock("aapl")
         self.assertIsInstance(position, Position, "PFS returns Position object")

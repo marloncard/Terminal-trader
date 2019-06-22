@@ -93,3 +93,20 @@ class TestUser(TestCase):
 
         mike = User.login("mikebloom", "password")
         self.assertEqual(mike.real_name, "Mike Bloom", "good credentials retrieve User object")
+
+    def testBuyNoMoney(self):
+        mike = User.from_pk(1)
+        with self.assertRaises(ValueError, msg="Should raise ValueError for negative amount"):
+            mike.buy('stok', -1)
+
+    def testRichest(self):
+        mike = User.richest()
+        # self.assertEqual(mike.real_name, "Mike Bloom", "richest function should return richest user")
+        # jack = User(**{
+        #     "user_name": "jackcoin",
+        #     "real_name": "Jack Smith",
+        #     "balance": 100050.0,
+        #     "password": "12345"})
+        # jack.save()
+        # new_richest = User.richest()
+        # self.assertEqual(new_richest.real_name, "Jack Smith", "richest function should return richest user")
