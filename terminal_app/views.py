@@ -38,7 +38,8 @@ def user_account_view(real_name, balance):
     ColorText("white", "5) See Trade History")
     ColorText("white", "6) See Trades for one stock")
     ColorText("white", "7) Deposit Money")
-    ColorText("white", "8) Logout")
+    ColorText("white", "8) View API Key")
+    ColorText("white", "9) Logout")
     return input("\n\nWhat's your selection? ")
 
 
@@ -56,9 +57,12 @@ def create_user():
         main_menu()
         create_user()
     
-    
+def api_view(key):
+    print("\n\nYour API Key is: \n")
+    ColorText("white", "{}".format(key))
 
 def exit_view():
+    print("")
     ColorText("blue", "Thanks for stopping by!")
     time.sleep(1)
     sys.exit()

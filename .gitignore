@@ -3,6 +3,11 @@ __pycache__
 .Python
 build/
 develop-eggs/
+*.pyc
+venv/
+
+*.db
+__pycache__/
 dist/
 downloads/
 eggs/
@@ -19,5 +24,4 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-venv/
 .vscode/

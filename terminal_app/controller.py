@@ -32,6 +32,7 @@ def run():
                             real_name=create_user[2],
                             balance=create_user[3])
             new_user.hash_password(create_user[1])
+            new_user.generate_api_key()
             new_user.save()
             ColorText("green", "Successfully added!")
             time.sleep(1)
@@ -78,9 +79,9 @@ def account_loop(user):
             account_loop(user)
         elif selection.strip() == "5":
             trades = user.all_trades()
-            print("{:<10}{:>10}{:>10}".format("Date", "Ticker", "Price", "Shares"))
+            print("{:<30}{:<10}{:>10}{:>10}".format("Date", "Ticker", "Price", "Shares"))
             for p in trades:
-                print("{:<10}{:<10}{:>10}{:>10}".format(p.time, p.ticker, p.price, p.volume))
+                print("{:<30}{:<10}{:>10}{:>10}".format(time.ctime(p.time), p.ticker, p.price, p.volume))
             input("Enter to continue...")
             account_loop(user)
         elif selection.strip() == "6":
@@ -101,6 +102,10 @@ def account_loop(user):
             time.sleep(1)
             account_loop(user)
         elif selection.strip() == "8":
+            views.api_view(user.api_key)
+            input("\nEnter to continue...")
+            account_loop(user)
+        elif selection.strip() == "9":
             run()
         
 

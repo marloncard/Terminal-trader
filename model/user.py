@@ -6,6 +6,7 @@ from .trade import Trade
 from .util import get_price
 import datetime
 import bcrypt
+import random
 
 
 class InsufficientFundsError(Exception):
@@ -116,8 +117,23 @@ class User(Sqlite3ORM):
     def richest(cls):
         return cls.many_where(' TRUE ORDER BY balance DESC')[0]
 
-# if 0 == 1:
-#     try:
-#         user.buy(ticker, amount)
-#     except InsufficientFundsError:
-#         view.insufficent_funds()
+    def generate_api_key(self):
+        self.api_key = str(random.randrange(10000000000000000000,99999999999999999999))
+        return self.api_key
+
+    @classmethod
+    def api_authenticate(cls, user_name, api_key):
+        '''
+        Similar to the login method, only instead of a username and password, it will
+        take an api key value as its argument. If the key exists in the users table,
+        the method returns the User object that matches that row, otherwise it returns
+        none.
+
+        * Write a unit test to test that this method works.
+        '''
+        user = cls.one_where("user_name=?", (user_name,))
+        if user is None:
+            return None
+        if user.api_key == api_key:
+            return user
+        return None

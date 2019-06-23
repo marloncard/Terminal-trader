@@ -21,6 +21,7 @@ class TestUser(TestCase):
         "balance": 10000.0
         })
         mike.hash_password("password")
+        mike.api_key = "11111111111111111111"
         mike.save()
 
     def tearDown(self):
@@ -101,12 +102,34 @@ class TestUser(TestCase):
 
     def testRichest(self):
         mike = User.richest()
-        # self.assertEqual(mike.real_name, "Mike Bloom", "richest function should return richest user")
-        # jack = User(**{
-        #     "user_name": "jackcoin",
-        #     "real_name": "Jack Smith",
-        #     "balance": 100050.0,
-        #     "password": "12345"})
-        # jack.save()
-        # new_richest = User.richest()
-        # self.assertEqual(new_richest.real_name, "Jack Smith", "richest function should return richest user")
+        self.assertEqual(mike.real_name, "Mike Bloom", "richest function should return richest user")
+        jack = User(**{
+            "user_name": "jackcoin",
+            "real_name": "Jack Smith",
+            "balance": 100050.0,
+            "password": "12345"})
+        jack.save()
+        new_richest = User.richest()
+        self.assertEqual(new_richest.real_name, "Jack Smith", "richest function should return richest user")
+
+    def testGenerateAPIKey(self):
+        roger = User(**{
+            "user_name": "rogersteel",
+            "real_name": "Roger Steel",
+            "balance": 200000.0,
+            "password": "password"
+        })
+        roger.hash_password("password")
+        key = roger.generate_api_key()
+        self.assertEqual(len(key), 20, "Key should exist and length should be 20 chars")
+        roger.save()
+
+        roger = User.login("rogersteel", "password")
+        self.assertEqual(roger.api_key, key,"User.api_key should match previously generated key")
+
+    def testAPIAuthenticate(self):
+        wrongapi = User.api_authenticate("mikebloom", "00000000000000000000")
+        self.assertIsNone(wrongapi, "bad api key return the None object")
+
+        mike = User.api_authenticate("mikebloom", "11111111111111111111")
+        self.assertEqual(mike.real_name, "Mike Bloom", "good credentials retrieve User object")
