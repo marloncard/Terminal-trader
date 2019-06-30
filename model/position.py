@@ -23,3 +23,10 @@ class Position(Sqlite3ORM):
         self.ticker = kwargs.get('ticker')
         self.amount = kwargs.get('amount', 0)
         self.user_info_pk = kwargs.get('user_info_pk')
+
+    def json(self):
+        '''
+        Prepare position data to be jsonified.
+        '''
+        return {"ticker":self.ticker, 
+                "amount":self.amount}

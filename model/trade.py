@@ -26,3 +26,12 @@ class Trade(Sqlite3ORM):
         self.price = kwargs.get('price')
         self.time = kwargs.get('time',time.time())
         self.user_info_pk = kwargs.get('user_info_pk')
+
+    def json(self):
+        '''
+        Prepare trade data to be jsonified.
+        '''
+        return {"ticker":self.ticker, 
+                "shares":self.volume, 
+                "price":self.price,
+                "date": time.ctime(self.time)}

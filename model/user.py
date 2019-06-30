@@ -59,7 +59,6 @@ class User(Sqlite3ORM):
         return position
 
     def buy(self, ticker, amount):
-        # TODO make a trade (volume=amount), price = price of 1 share
         """ buy a stock. if there is no current position, create one, if there is
         increase its amount. no return value """
         if amount < 1:
@@ -77,9 +76,9 @@ class User(Sqlite3ORM):
         new_trade = Trade(ticker=ticker.lower(), volume=amount, price=ticker_price, user_info_pk=self.pk)
         new_trade.save()
         self.save()
+        return new_trade
 
     def sell(self, ticker, amount):
-        # TODO make a trade (volume =- amount) 
         """ sell a stock. if there is not current"""
         if amount < 0:
             raise ValueError
@@ -100,6 +99,7 @@ class User(Sqlite3ORM):
             position.save()
         new_trade.save()
         self.save()
+        return new_trade
 
     def all_trades(self):
         """Return a list of trade objects for every trade made by this user
@@ -122,7 +122,7 @@ class User(Sqlite3ORM):
         return self.api_key
 
     @classmethod
-    def api_authenticate(cls, user_name, api_key):
+    def api_authenticate(cls, api_key):
         '''
         Similar to the login method, only instead of a username and password, it will
         take an api key value as its argument. If the key exists in the users table,
@@ -131,9 +131,16 @@ class User(Sqlite3ORM):
 
         * Write a unit test to test that this method works.
         '''
-        user = cls.one_where("user_name=?", (user_name,))
+        user = cls.one_where("api_key=?", (api_key,))
         if user is None:
             return None
-        if user.api_key == api_key:
-            return user
-        return None
+        return user
+        
+
+    def json(self):
+        '''
+        Prepare user data to be jsonified.
+        '''
+        return {"user_name":self.user_name, 
+                "real_name":self.real_name, 
+                "balance":self.balance}
