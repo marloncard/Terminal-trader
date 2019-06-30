@@ -13,15 +13,15 @@ def not_found(error):
 
 @app.route("/api/account_info/<api_key>", methods=['GET'])
 def get_user(api_key):
-    # curl http://localhost:5000/api/account_info/32641019545724871837
+    # curl http://localhost:5000/api/account_info/11111111111111111111
     user = User.one_where("api_key=?", (api_key,))
     if user is None:
         abort(404)
     return jsonify(user.json())
 
 @app.route("/api/get_api_key", methods=["POST"])
-# curl -i -H "Content-Type: application/json" -X POST -d '{"user_name":"mikebloom", "password":"password"}' http://localhost:5000/api/get_api_key
 def web_login():
+    # curl -i -H "Content-Type: application/json" -X POST -d '{"user_name":"mikebloom", "password":"password"}' http://localhost:5000/api/get_api_key
     """ accept a username and password in json data, return the user's api key """
     if request.json is None:
         abort(404)
@@ -30,20 +30,22 @@ def web_login():
     user = User.login(user_name, password)
     return jsonify({"API Key":user.api_key})
 
-# FIXME create account cannot have pre-existing api_key
-@app.route('/api/create_account/<api_key>', methods=["POST"])
-def create_account(api_key):
+
+@app.route('/api/create_account', methods=["POST"])
+def create_account():
+    # curl -i -H "Content-Type: application/json" -X POST -d '{"user_name":"bobdoe", "real_name":"Bob Doe", "password":"password"}' http://localhost:5000/api/create_account
     """ create an account with a username, realname, and password provided in
     a json POST request """
-    if not request.get_json():
+    if request.json is None:
         abort(404)
-    if "user_name" or "real_name" not in request.json():
-        abort(404)
-    user = User({"user_name": request.get_json().user_name,
-                 "real_name": request.get_json().real_name,
-                 "balance": request.get_json().balance})
+    user = User(**{"user_name": request.json["user_name"],
+                 "password": request.json["password"],
+                 "real_name": request.json["real_name"]})
+    user.hash_password(user.password)
+    key = user.generate_api_key()
     user.save()
-    return jsonify(user)
+    return jsonify(user.json())
+
 
 @app.route('/api/price/<ticker>', methods=["GET"])
 def lookup_price(ticker):
@@ -98,6 +100,7 @@ def get_trades_for(ticker, api_key):
 
 @app.route('/api/deposit/<api_key>', methods=["POST"])
 def deposit(api_key):
+    # curl -i -H "Content-Type: application/json" -X POST -d '{"amount":200.0}' http://localhost:5000/api/deposit/32641019545724871837
     if not request.json or "amount" not in request.json:
         return jsonify({"error": "deposit requires json with 'amount' key"}), 400
     amount = request.json["amount"]

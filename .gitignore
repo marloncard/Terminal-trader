@@ -3,9 +3,7 @@ __pycache__
 .Python
 build/
 develop-eggs/
-*.pyc
 venv/
-
 *.db
 __pycache__/
 dist/

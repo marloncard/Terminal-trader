@@ -141,6 +141,7 @@ class User(Sqlite3ORM):
         '''
         Prepare user data to be jsonified.
         '''
-        return {"user_name":self.user_name, 
-                "real_name":self.real_name, 
-                "balance":self.balance}
+        return {"User Name":self.user_name, 
+                "Real Name":self.real_name, 
+                "Balance":self.balance,
+                "API Key":self.api_key}
