@@ -12,6 +12,7 @@ from schema import build_user
 class TestUser(TestCase):
     
     def setUp(self):
+
         build_user()
 
         mike = User(**{
@@ -128,8 +129,8 @@ class TestUser(TestCase):
         self.assertEqual(roger.api_key, key,"User.api_key should match previously generated key")
 
     def testAPIAuthenticate(self):
-        wrongapi = User.api_authenticate("mikebloom", "00000000000000000000")
+        wrongapi = User.api_authenticate("00000000000000000000")
         self.assertIsNone(wrongapi, "bad api key return the None object")
 
-        mike = User.api_authenticate("mikebloom", "11111111111111111111")
+        mike = User.api_authenticate("11111111111111111111")
         self.assertEqual(mike.real_name, "Mike Bloom", "good credentials retrieve User object")
