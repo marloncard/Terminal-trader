@@ -5,6 +5,10 @@ from model.util import get_price
 from model.user import InsufficientFundsError, InsufficientSharesError
 
 
+@app.route("/")
+def index():
+    return "<h1>Trader App</h1>"
+
 
 @app.errorhandler(404)
 def not_found(error):
