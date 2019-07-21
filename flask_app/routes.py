@@ -1,4 +1,4 @@
-from flask import request, jsonify, abort, make_response
+from flask import request, jsonify, abort, make_response, render_template
 from .app import app
 from model.user import User
 from model.util import get_price
@@ -7,7 +7,7 @@ from model.user import InsufficientFundsError, InsufficientSharesError
 
 @app.route("/")
 def index():
-    return "<h1>Trader App</h1>"
+    return render_template('index.html')
 
 
 @app.errorhandler(404)
@@ -23,6 +23,15 @@ def get_user(api_key):
         abort(404)
     return jsonify(user.json())
 
+@app.route("/api/check_user/<user_name>", methods=['GET'])
+def check_user(user_name):
+    # curl
+    user = User.one_where("user_name=?", (user_name,))
+    if user is None:
+        return jsonify({"OK": "valid"}), 200
+    else:
+        return jsonify({"Duplicate": user.user_name}), 409
+
 @app.route("/api/get_api_key", methods=["POST"])
 def web_login():
     # curl -i -H "Content-Type: application/json" -X POST -d '{"user_name":"mikebloom", "password":"password"}' http://localhost:5000/api/get_api_key
@@ -32,7 +41,7 @@ def web_login():
     user_name = request.json["user_name"]
     password = request.json["password"]
     user = User.login(user_name, password)
-    return jsonify({"API Key":user.api_key})
+    return jsonify({"api_key":user.api_key})
 
 
 @app.route('/api/create_account', methods=["POST"])
@@ -48,7 +57,7 @@ def create_account():
     user.hash_password(user.password)
     key = user.generate_api_key()
     user.save()
-    return jsonify(user.json())
+    return jsonify(user.json()), 201
 
 
 @app.route('/api/price/<ticker>', methods=["GET"])

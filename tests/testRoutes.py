@@ -42,7 +42,18 @@ class TestRoutes(TestCase):
     def tearDown(self):
         pass
 
-
+    def test_create_account(self):
+        endpoint = 'create_account'
+        paul = {
+        "user_name": "muadib",
+        "real_name": "Paul Muadib",
+        "password": "password"}
+        response = self.app.post(BASE_URL+endpoint,
+                                data=json.dumps(paul),
+                                content_type='application/json')
+        paul = User.from_pk(2)
+        self.assertEqual(response.status_code, 201, "status code should be 201")
+        self.assertEqual(paul.user_name, "muadib", "Paul's username should be 'muadib'")
 
     def test_deposit_route(self):
         endpoint = 'deposit/'
@@ -53,5 +64,11 @@ class TestRoutes(TestCase):
                                  data=json.dumps(deposit),
                                  content_type='application/json')                               
         mike = User.from_pk(1)
-        self.assertEqual(response.status_code, 201, "Status Code should be 201")
+        self.assertEqual(response.status_code, 201, "status Code should be 201")
         self.assertEqual(mike.balance, 1500.0, "Mike's balance should equal 1500")
+
+    def test_account_info(self):
+        pass
+
+    def test_get_api_key(self):
+        pass
