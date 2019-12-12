@@ -56,7 +56,7 @@ def account_loop(user):
             input("Enter to continue...")
             account_loop(user)
         elif selection.strip() =="3":
-            ticker = input("Enter ticker symbol: ")
+            ticker = input("Enter ticker symbol: ").lower()
             buy_amt = int(input("Enter amount of shares you want to buy: "))
             try:
                 user.buy(ticker,buy_amt)
@@ -68,7 +68,7 @@ def account_loop(user):
             account_loop(user)
 
         elif selection.strip() == "4":
-            ticker = input("Enter ticker symbol: ")
+            ticker = input("Enter ticker symbol: ").lower()
             sell_amt = int(input("Enter amount of shares you want to sell: "))
             try:
                 user.sell(ticker,sell_amt)
@@ -85,7 +85,7 @@ def account_loop(user):
             input("Enter to continue...")
             account_loop(user)
         elif selection.strip() == "6":
-            ticker = input("Enter ticker symbol: ")
+            ticker = input("Enter ticker symbol: ").lower()
             trades = user.trades_for(ticker)
 
             print("{:<10}{:>10}{:>10}".format("Ticker", "Price", "Shares"))
