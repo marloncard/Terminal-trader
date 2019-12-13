@@ -80,7 +80,7 @@ class User(Sqlite3ORM):
 
     def sell(self, ticker, amount):
         """ sell a stock. if there is not current"""
-        if amount < 0:
+        if amount < 0.0000001: # Allow selling of fractional shares
             raise ValueError
         cost = get_price(ticker) * amount
         position = self.positions_for_stock(ticker)

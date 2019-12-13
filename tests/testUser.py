@@ -1,6 +1,28 @@
 #!/usr/bin/env python3
 """
-To execute from base of project directory run: 
+To execute from base of project directory run:
+
+ASSERTIONS:
+
+    METHOD                      CHECKS THAT:
+    assertEqual(a, b)           a == b
+    assertNotEqual(a, b)        a != b
+    assertTrue(x)               bool(x) is True
+    assertFalse(x)              bool(x) is False
+    assertIs(a, b)              a is b
+    assertIsNot(a, b)           a is not b
+    assertIsNone(x)             x is None
+    assertIsNotNone(x)          x is not None
+    assertIn(a, b)              a in b
+    assertNotIn(a, b)           a not in b
+    assertIsInstance(a, b)      isinstance(a, b)
+    assertNotIsInstance(a, b)   not isinstance(a, b)
+
+    assertAlmostEqual(a, b)     round(a-b, 7) == 0
+
+    'All the assert methods accept a msg argument that, 
+    if specified, is used as the error message on failure'
+
 python3 -m unittest tests/testUser.py
 To run all tests run: 
 python3 -m unittest tests discover

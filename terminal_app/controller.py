@@ -60,10 +60,20 @@ def account_loop(user):
             buy_amt = int(input("Enter amount of shares you want to buy: "))
             try:
                 user.buy(ticker,buy_amt)
+            except ValueError:
+                print("")
+                ColorText("red", "\nInvalid Amount")
+                time.sleep(1)
+                account_loop(user)
             except InsufficientFundsError:
                 print("")
                 ColorText("red", "\nInsufficient Funds")
                 time.sleep(1)
+                account_loop(user)
+            except Exception:
+                print("")
+                ColorText("red", "\nConnection Error")
+                time.sleep(2)
                 account_loop(user)
             account_loop(user)
 
@@ -72,10 +82,20 @@ def account_loop(user):
             sell_amt = int(input("Enter amount of shares you want to sell: "))
             try:
                 user.sell(ticker,sell_amt)
+            except ValueError:
+                print("")
+                ColorText("red", "\nInvalid Amount")
+                time.sleep(1)
+                account_loop(user)
             except InsufficientSharesError:
                 print("")
                 ColorText("red", "\nInsufficent Shares")
                 time.sleep(1)
+            except Exception:
+                print("")
+                ColorText("red", "\nConnection Error")
+                time.sleep(2)
+                account_loop(user)
             account_loop(user)
         elif selection.strip() == "5":
             trades = user.all_trades()

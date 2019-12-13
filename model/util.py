@@ -14,16 +14,20 @@ FAKEDATA = {
 def get_price(ticker):
     if ticker in FAKEDATA:
         return FAKEDATA[ticker]
-    
     url = BASE_URL + ENDPOINT.format(symbol=ticker, token=TOKEN)
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        if data:
-            return data[0]["lastSalePrice"]
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                return data[0]["lastSalePrice"]
+            else:
+                return None
         else:
             return None
-    return None
+    except requests.RequestException as e:
+        print("Connection Error: ", e)
+        return None
 
 
 if __name__ == '__main__':

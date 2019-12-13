@@ -59,4 +59,7 @@ def build_trades():
         cur.execute(Trade.create_sql)
 
 if __name__ == '__main__':
+    #build_user()
+    build_positions()
     build_trades()
+
